@@ -131,7 +131,7 @@ As it might already occoured to you, the bitmap is used for allocation by tracki
 
 When we want to free this issued memory, we can simply compute the starting index of this memory by subtracting the heap pointer from the issued block pointer. But to be able to free the memory, we must also know how large the issued block is. And the information about length is stored as metadata right before the block itself.
 
-When we allocate the block, we actually allocate a bit more, exactly `metadata_byte_size` more, creating a "metablock". Of course, we do not want to return pointer to the metablock, so the user is not bothered by this. Instead, we offset the pointer by `metadata_byte_size`, so it points to the block (data) part.
+When we allocate the block, we actually allocate a bit more, exactly `metadata_byte_size` more, creating a "metablock". Of course, we do not want to return pointer to the metablock, in order to not bother the user. Instead, we offset the pointer by `metadata_byte_size`, so it points to the block (data) part.
 
 ### metadata_byte_size?
 
@@ -151,7 +151,7 @@ Ceil? And base 2 logarithm?! Yikes! No way we can compute this at compile time. 
 
 ## Alignment
 
-I've learned to compile my C programs with `-fsanitize=address,undefined`, ASan and UBSan. I may add some more in the future. You can read more about it [here](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html).
+I've learned to compile my C programs with `-fsanitize=address,undefined`, ASan and UBSan. I may learn to use some more in the future. You can read more about it [here](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html).
 
 But why am I talking about this? Well, when I first tested the library, UBSan reported unaligned memory, which is actually an example of undefined behaviour. Since I compiled the program without optimizations, fortunately, no [nasal demons](https://groups.google.com/g/comp.std.c/c/ycpVKxTZkgw/m/S2hHdTbv4d8J) were involved. But no runtime error/warning looks good, eh?
 
