@@ -159,6 +159,10 @@ void sfree(void * block) {
 
 void * srealloc_aligned(void * block, const size_t new_size, const size_t alignment) {
     if (!INITIALIZED) {return NULL;}
+    if (new_size == 0) {return NULL;}
+    if (new_size > HEAP_SIZE) {return NULL;}
+    if (alignment == 0) {return NULL;}
+
     void * new_block = salloc_aligned(new_size, alignment);
     if (new_block == NULL) {return NULL;}
     memcpy(new_block, block, _read_metadata(_metablock_ptr(block)));
