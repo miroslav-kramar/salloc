@@ -153,14 +153,16 @@ Ceil? And base 2 logarithm?! Yikes! No way we can compute this at compile time. 
 
 At compile time, `metadata_byte_size` is initialized with `0`. Every call to `salloc` or `salloc_aligned` then checks whether or not it was set to a nonzero value (like, actually initialized). If not, it then performs the necessary computation mentioned above (plus some adjustments). Now, the metadata byte size is known. Hurray!
 
+Of course, one could ask what happens, when the user sets the heap size to something ridiculously small, or zero. And my answer is: I don't know! Why would you do that?! Look, I know making stuff bulletproof is exciting. But sometimes breaking it is at least as, if not more exciting. And I've already warned you to not use this library for anything even remotely serious. So if you want to break it, go on. I am not stopping you. Although I could add some static asserts to assure some minimal heap size. Someday. Maybe.
+
 ## Alignment
 
 I've learned to compile my C programs with `-fsanitize=address,undefined`, ASan and UBSan. They both proved to be a very useful tools, at least easing the pain of searching for bugs in C programs. You can read more about it [here](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html).
 
-But why am I talking about this? Well, when I first tested the library, UBSan reported unaligned memory, which is actually an example of undefined behavior. Since I compiled the program without optimizations, fortunately, no [nasal demons](https://groups.google.com/g/comp.std.c/c/ycpVKxTZkgw/m/S2hHdTbv4d8J) were involved. But no runtime warning looks good, eh?
+But why am I talking about this? Well, when I first tested the library, UBSan reported unaligned memory, which is actually an example of undefined behavior. Since I compiled the program without optimizations, fortunately, no [nasal demons](https://groups.google.com/g/comp.std.c/c/ycpVKxTZkgw/m/S2hHdTbv4d8J) seemed to be involved. But no runtime warning looks good, eh?
 
 Since I was oblivious to the fact that unaligned read and write are actually a huge problem, I happily issued blocks with starting addres at... wherever.
 
-But issuing aligned memory, e.g. pointer of address divisible by the alignment of the data type we want to read/write seems to be actually very important for the CPU accessing data on such memory. From what I've been told, some processors can handle unaligned memory, like my 10th gen Intel Core i5, but for a performance cost. And some processors refuse to bother and just straight up terminate the program.
+But issuing aligned memory, e.g. at address divisible by the alignment of the data type we want to read/write seems to be actually very important for the CPU accessing the data on such address. From what I've been told, some processors can handle unaligned memory, like my 10th gen Intel Core i5, but for a performance cost. And some processors refuse to bother and just straight up terminate the program.
 
 So I just introduced `..._aligned` versions of `salloc` and `srealloc` and performed some additional computation to actually issue an aligned block. And also made the `salloc` and `srealloc` both use the max alignment, which is a very sad `16` bytes, but hey, it works!
