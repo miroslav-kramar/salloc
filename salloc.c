@@ -32,6 +32,7 @@ static uint8_t _metadata_byte_size = 0;
 #define INITIALIZED (_metadata_byte_size != 0)
 #define _NTH_BYTE(nth_bit) (nth_bit / CHAR_BIT)
 #define _BIT_IN_BYTE(nth_bit) (CHAR_BIT - 1 - (nth_bit % CHAR_BIT))
+#define UNREACHABLE assert(0 && "Unreachable!")
 
 // ----------------
 // HELPER FUNCTIONS
@@ -55,26 +56,57 @@ static inline uint8_t _get_bit(void * obj, const size_t nth_bit) {
     X(32) \
     X(64)
 
+// static inline void _init_metadata_byte_size() {
+//     if (_metadata_byte_size != 0) {return;}
+//     const uint8_t bytes = ceil(log2(HEAP_SIZE+1) / CHAR_BIT) ;
+//     if      (bytes <= 8/8) {_metadata_byte_size = 8/8;}
+//     else if (bytes <= 16/8) {_metadata_byte_size = 16/8;}
+//     else if (bytes <= 32/8) {_metadata_byte_size = 32/8;}
+//     else if (bytes <= 64/8) {_metadata_byte_size = 64/8;}
+//     else {UNREACHABLE;}
+// }
+
 static inline void _init_metadata_byte_size() {
     if (_metadata_byte_size != 0) {return;}
-    const uint16_t bits = ceil(log2(HEAP_SIZE+1));
-    #define X(size) if (bits <= size) {_metadata_byte_size = size / CHAR_BIT; return;}
+    const uint8_t bytes = ceil(log2(HEAP_SIZE+1) / CHAR_BIT) ;
+    #define X(bits) if (bytes <= bits/CHAR_BIT) {_metadata_byte_size = bits/CHAR_BIT; return;}
     LIST_OF_BIT_SIZES
     #undef X
+    UNREACHABLE;
 }
 
+// static inline uint64_t _read_metadata(void * metablock) {
+//     switch (_metadata_byte_size) {
+//         case 1: return *(uint8_t  *) metablock;
+//         case 2: return *(uint16_t *) metablock;
+//         case 4: return *(uint32_t *) metablock;
+//         case 8: return *(uint64_t *) metablock;
+//         default: UNREACHABLE;
+//     }
+// }
+
 static inline uint64_t _read_metadata(void * metablock) {
-    switch (_metadata_byte_size * CHAR_BIT) {
-        #define X(size) case size: return *(uint##size##_t *) metablock;
+    switch (_metadata_byte_size) {
+        #define X(bits) case bits/CHAR_BIT: return *(uint##bits##_t *) metablock;
         LIST_OF_BIT_SIZES
         #undef X
-        default: assert(0 && "Unreachable!");
+        default: UNREACHABLE;
     }
 }
 
+// static inline void _write_metadata(void * metablock, uint64_t value) {
+//     switch (_metadata_byte_size) {
+//         case 1: *(uint8_t  *) metablock = value; break;
+//         case 2: *(uint16_t *) metablock = value; break;
+//         case 4: *(uint32_t *) metablock = value; break;
+//         case 8: *(uint64_t *) metablock = value; break;
+//         default: assert(0 && "Unreachable!");
+//     }
+// }
+
 static inline void _write_metadata(void * metablock, uint64_t value) {
-    switch (_metadata_byte_size * CHAR_BIT) {
-        #define X(size) case size: *(uint##size##_t *) metablock = value; break;
+    switch (_metadata_byte_size) {
+        #define X(bits) case bits/CHAR_BIT: *(uint##bits##_t *) metablock = value; break;
         LIST_OF_BIT_SIZES
         #undef X
         default: assert(0 && "Unreachable!");
