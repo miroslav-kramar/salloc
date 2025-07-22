@@ -136,7 +136,7 @@ If the user, for example, decides to define the heap as `4096` bytes large, then
 The formula for computing the minimum number of bits to store the block size is:
 
 $$
-\text{bits = ceil}(\log_2(\text{HEAP\\\_SIZE} + 1))
+\text{bytes} = \frac{\text{ceil}(\log_2(\text{HEAP\\\_SIZE} + 1))}{\text{CHAR\\\_BIT}}
 $$
 
 Ceil? And base 2 logarithm?! Yikes! No way we can compute this at compile time. At least not in C. But no way I am switching languages just because of this minor inconvenience. So runtime it is. 
