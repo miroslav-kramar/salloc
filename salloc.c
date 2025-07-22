@@ -12,7 +12,7 @@
 // -------
 
 #ifndef HEAP_SIZE
-#define HEAP_SIZE 65536
+#define HEAP_SIZE 8192
 #endif
 
 #define DEFAULT_ALIGNMENT (_Alignof(max_align_t))

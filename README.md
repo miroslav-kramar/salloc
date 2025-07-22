@@ -107,6 +107,12 @@ The library implementation uses only standard C. It can be compiled as:
 gcc main.c salloc.c -Wall
 ```
 
+Default heap size is 8192. If you want custom heap size, then compile with
+
+```bash
+gcc main.c salloc.c -DHEAP_SIZE=65536
+```
+
 ## A little story on how it was built
 
 ### Global state
