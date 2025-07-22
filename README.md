@@ -99,7 +99,7 @@ int main() {
 }
 ```
 
-# Building
+## Building
 
 The library implementation uses only standard C. It can be compiled as:
 
