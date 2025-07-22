@@ -139,7 +139,7 @@ When designing the library, I thought about how many bytes should the metadata o
 
 If the user, for example, decides to define the heap as `4096` bytes large, then the maximum sized block of memory we can issue is sligtly less than that. Full `size_t` worth of memory (8 bytes on a modern 64bit system) is arguably overkill. `4096` fits well into just 2 bytes (`short int`) of memory. So I decided to compute the number of bytes the metadata of each block should occupy based on the heap size. 
 
-The formula for computing the minimum number of bits to store the block size is:
+The formula for computing the minimum number of bytes to store the block size is:
 
 $$
 \text{bytes} = \frac{\text{ceil}(\log_2(\text{HEAP\\\_SIZE} + 1))}{\text{CHAR\\\_BIT}}
