@@ -2,7 +2,7 @@
 By Miroslav Kramár, with love
 
 > [!WARNING]
-> This is an experiment. I discourage anyone from using this library seriously. The allocation logic is probably too complicated and slow anyways.
+> This is an experiment! I discourage serious usage.
 
 Malloc/free-like API to perform dynamic allocations on the stack.
 
@@ -10,7 +10,7 @@ This implementation assumes C11 standard. However, with slight tweaks, C99 is po
 
 ## Example usage
 
-> **NOTE**: Every function performing allocation will return `NULL` when it fails to find a large enough block. It allso returns `NULL` when provided with invalid parameters, such as requesting a block of size `0` or block with `0` alignment.
+> **NOTE**: Every function performing allocation will return `NULL` when it fails to find a large enough block. It also returns `NULL` when provided with invalid parameters, such as requesting a block of size `0` or block with `0` alignment.
 
 ### Basic example
 
